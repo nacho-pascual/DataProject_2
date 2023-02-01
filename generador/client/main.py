@@ -10,9 +10,9 @@ from faker import Faker
 from datetime import datetime
 from google.cloud import pubsub_v1
 
-#user_id=os.getenv('USER_ID')
-#topic_id=os.getenv('TOPIC_ID')
-#time_lapse=os.getenv('TIME_ID')
+user_id=os.getenv('USER_ID')
+topic_id=os.getenv('TOPIC_ID')
+time_lapse=os.getenv('TIME_ID')
 
 fake = Faker()
 
