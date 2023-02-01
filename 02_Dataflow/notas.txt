@@ -1,0 +1,6 @@
+python edem_dataflow_streaming.py \
+    --project_id psyched-freedom-376515 \
+    --hostname <HOSTNAME> \
+    --input_subscription <INPUT_PUBSUB_SUBSCRIPTION> \
+    --output_topic <OUTPUT_PUBSUB_TOPIC> \
+    --output_bigquery <DATASET>.<TABLE>

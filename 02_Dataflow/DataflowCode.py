@@ -43,10 +43,37 @@ def parse_json_message(message):
 #Create Beam pipeline
 def edemData(output_table):
 
-    #Load schema from BigQuery/schemas folder
-    with open(f"schemas/{output_table}.json") as file:
-        input_schema = json.load(file)
+    # #Load schema from BigQuery/schemas folder
+    # with open(f"schemas/{output_table}.json") as file:
+    #     input_schema = json.load(file)
+    input_schema = {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "device_id",
+                "type" : "STRING"
 
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "client_id",
+                "type" : "STRING"
+
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "kw",
+                "type" : "STRING"
+
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "timestamp",
+                "type" : "STRING"
+
+            }
+        ]
+    }
     schema = bigquery_tools.parse_table_schema_from_json(json.dumps(input_schema))
     def print_data(elem):
         print(elem)
@@ -60,7 +87,7 @@ def edemData(output_table):
         #Part01: we create pipeline from PubSub to BigQuery
         data = (
             #Read messages from PubSub
-            p | "Read messages from PubSub" >>  beam.io.ReadFromPubSub(subscription=f"projects/psyched-fredoom-376515/subscriptions/{output_table}-sub", with_attributes=True)
+            p | "Read messages from PubSub" >>  beam.io.ReadFromPubSub(subscription=f"projects/psyched-freedom-376515/subscriptions/{output_table}-sub", with_attributes=True)
             #Parse JSON messages with Map Function and adding Processing timestamp
               | "Parse JSON messages" >> beam.Map(parse_json_message)
               |"Print">>beam.Map(print_data)
@@ -69,7 +96,7 @@ def edemData(output_table):
         #Part02: Write proccessing message to their appropiate sink
         #Data to Bigquery
         (data | "Write to BigQuery" >>  beam.io.WriteToBigQuery(
-            table = f"psyched-fredoom-376515:edemDataset.{output_table}",
+            table = f"psyched-freedom-376515:prueba1feb.{output_table}",
             schema = schema,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
