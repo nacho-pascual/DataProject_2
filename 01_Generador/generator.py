@@ -8,6 +8,7 @@ import argparse
 import google.auth
 from faker import Faker
 from datetime import datetime
+import pytz
 from google.cloud import pubsub_v1
 
 fake = Faker()
@@ -54,7 +55,7 @@ def generateMockData(client_id, device_id):
         "device_id": device_id,
         "client_id": client_id,
         "kw": str(random.randint(0, 1000)),
-        "timestamp": str(datetime.now())
+        "timestamp": str(datetime.now(pytz.timezone('Europe/Madrid')))
     }
 
 def run_generator(project_id, topic_name):
