@@ -71,6 +71,12 @@ def edemData(output_table):
                 "name": "timestamp",
                 "type" : "STRING"
 
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "processingTime",
+                "type": "STRING"
+
             }
         ]
     }

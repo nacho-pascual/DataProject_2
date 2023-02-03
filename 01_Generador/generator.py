@@ -62,7 +62,7 @@ def generateMockData():
         # "device_name": client_name,
         "device_id": device_id,
         "client_id": client_id,
-        "kw": random.randint(0, 1000),
+        "kw": str(random.randint(0, 1000)),
         "timestamp": str(datetime.now())
     }
 
