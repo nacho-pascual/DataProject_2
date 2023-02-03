@@ -1,9 +1,3 @@
-# Serverless_Data_Processing_GCP
-# EDEM_Master_Data_Analytics
-
-""" Data Stream Generator:
-The generator will publish a new record simulating a new transaction in our site.""" 
-
 #Import libraries
 import json
 import time
@@ -51,15 +45,12 @@ class PubSubMessages:
             
 
 #Generator Code
-def generateMockData():
-    # device_id = random.choice(['pF8z9GBG', 'XsEOhUOT', '89x5FhyA', 'S3yG1alL', '5pz386iG'])
-    # device_name = random.choice()
-    device_id = str(uuid.uuid4())
-    client_id = str(uuid.uuid4())
+def generateMockData(client_id, device_id):
+
 
     #Return values
     return {
-        # "device_name": client_name,
+
         "device_id": device_id,
         "client_id": client_id,
         "kw": str(random.randint(0, 1000)),
@@ -69,12 +60,27 @@ def generateMockData():
 def run_generator(project_id, topic_name):
     pubsub_class = PubSubMessages(project_id, topic_name)
     #Publish message into the queue every 5 seconds
+    clients = { }
+
+    num_clients = 5
+    num_devices = 5
+
+    for i in range (0, num_clients):
+        client_id = str(uuid.uuid4())
+        clients[client_id] = []
+        for n in range (0, num_devices):
+            device_id = str(uuid.uuid4())
+            clients[client_id].append(device_id)
+            
     try:
         while True:
-            message: dict = generateMockData()
-            pubsub_class.publishMessages(message)
-            #it will be generated a transaction each 2 seconds
-            time.sleep(5)
+            for client_id in clients:
+                 for device_id in clients[client_id]:
+                    message = generateMockData(client_id, device_id)
+                    print(message)
+                    pubsub_class.publishMessages(message)
+                    #it will be generated a transaction each 2 seconds
+                    time.sleep(5)
     except Exception as err:
         logging.error("Error while inserting data into out PubSub Topic: %s", err)
     finally:
