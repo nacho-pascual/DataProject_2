@@ -1,1 +1,7 @@
 google-cloud-bigquery
+apache-beam[gcp]==2.41.0
+google-cloud-bigquery
+Faker
+google-cloud-pubsub
+google-cloud-storage
+google-cloud-bigquery
