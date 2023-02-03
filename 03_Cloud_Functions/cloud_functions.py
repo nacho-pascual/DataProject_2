@@ -9,20 +9,21 @@ def pubsub_to_bigquery(event, context):
     logging.getLogger().setLevel(logging.INFO)
     
     #Dealing with environment variables
-    project_id = os.environ['psyched-freedom-376515']
-    table = os.environ['my_topic_output']
+    project_id = os.environ['PROJECT_ID']
+    table = os.environ['BIGQUERY_TABLE_ID']
 
     #Read message from Pubsub (decode from Base64)
-    pubsub_message = base64.b64decode(event['data'].decode('utf-8'))
+    pubsub_message = base64.b64decode(event['data'])
 
     #Load Json
     message = json.loads(pubsub_message)
 
-    # BigQuery
+    logging.info(message)
 
+    # BigQuery
     try:
-        bq_client = bigquery.Client (project=project_id)
-        errors = bq_client.insert_rows_json (table, [message])
+        bq_client = bigquery.Client(project=project_id)
+        errors = bq_client.insert_rows_json(table, [message])
         if errors == []:
             logging.info("New rows have been added into BigQuery table.")
         else:
