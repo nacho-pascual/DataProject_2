@@ -69,6 +69,16 @@ def generateMockData():
 def run_generator(project_id, topic_name):
     pubsub_class = PubSubMessages(project_id, topic_name)
     #Publish message into the queue every 5 seconds
+    clients = { }
+
+    num_clients = 100
+    num_devices = 5
+
+    for n in range(0, num_clients):
+        client_id = str(uuid.uuid4())
+        clients[client_id] = []
+        for m in range(0, num_devices):
+            clients[client_id] << str(uuid.uuid4())
     try:
         while True:
             message: dict = generateMockData()
