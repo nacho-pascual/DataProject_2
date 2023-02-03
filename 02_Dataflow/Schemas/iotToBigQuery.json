@@ -7,18 +7,23 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "timeStamp",
+      "name": "client_id",
       "type": "STRING"
     },
     {
       "mode": "NULLABLE",
-      "name": "client_id",
+      "name": "timestamp",
       "type": "STRING"
     },
     {
       "mode": "NULLABLE",
       "name": "kw",
       "type": "NUMERIC"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "processingTime",
+      "type": "STRING"
     }
     ]
 }
