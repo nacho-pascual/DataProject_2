@@ -35,8 +35,8 @@ class PubSubMessages:
 
     def publishMessages(self, message):
         json_str = json.dumps(message)
-        # topic_path = self.publisher.topic_path(self.project_id, self.topic_name)
-        # publish_future = self.publisher.publish(topic_path, json_str.encode("utf-8"))
+        topic_path = self.publisher.topic_path(self.project_id, self.topic_name)
+        publish_future = self.publisher.publish(topic_path, json_str.encode("utf-8"))
         logging.info("A New transaction has been registered. Id: %s", message)
 
     def __exit__(self):
