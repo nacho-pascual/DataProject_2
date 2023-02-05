@@ -52,11 +52,11 @@ def main(argv):
    try:
       opts, args = getopt.getopt(argv,"t:e:i:",["topcontainers=","elapsedtime=","imagename="])
    except getopt.GetoptError:
-      print('app.py -t <topcontainers> -e <elapsedtime> -i <imagename>')
+      print('main.py -t <topcontainers> -e <elapsedtime> -i <imagename>')
       sys.exit(2)
    for opt, arg in opts:
       if opt in ("-h", "--help"):
-         print('app.py -t <topcontainers> -e <elapsedtime> -n <imagename>')
+         print('main.py -t <topcontainers> -e <elapsedtime> -n <imagename>')
          print(" elapsedtime: int (seconds)")
          print(" topcotainers: int (top number of concurrent clients)")
          print(" image: string (image name)")
