@@ -1,5 +1,10 @@
 {
     "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "device_name",
+        "type" : "STRING"
+    },
     {
       "mode": "NULLABLE",
       "name": "device_id",
