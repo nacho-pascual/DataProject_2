@@ -2,7 +2,7 @@
     "fields": [
       {
         "mode": "NULLABLE",
-        "name": "kw",
+        "name": "device_name",
         "type" : "STRING"
     },
     {
