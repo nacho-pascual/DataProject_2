@@ -1,0 +1,29 @@
+{
+    "fields": [
+    {
+      "mode": "NULLABLE",
+      "name": "device_id",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "client_id",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "timestamp",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "kw",
+      "type": "NUMERIC"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "processingTime",
+      "type": "STRING"
+    }
+    ]
+}

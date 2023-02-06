@@ -1,0 +1,39 @@
+{
+    "fields": [
+    {
+      "mode": "NULLABLE",
+      "name": "device_id",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "client_id",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "timestamp",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "kw",
+      "type": "NUMERIC"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "processingTime",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "State",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "AlertType",
+      "type": "STRING"
+    }    
+    ]
+}
