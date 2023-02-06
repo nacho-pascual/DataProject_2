@@ -1,5 +1,10 @@
 {
     "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "kw",
+        "type" : "STRING"
+    },
     {
       "mode": "NULLABLE",
       "name": "device_id",

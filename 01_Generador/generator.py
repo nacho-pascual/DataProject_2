@@ -44,9 +44,10 @@ class PubSubMessages:
         self.publisher.transport.close()
         logging.info("PubSub Client closed.")
             
+lista_devices = ["TV", "horno", "microondas", "nevera", "lavadora"]
 
 #Generator Code
-def generateMockData(client_id, device_id):
+def generateMockData(client_id, device_id, name):
 
 
     #Return values
@@ -54,6 +55,7 @@ def generateMockData(client_id, device_id):
 
         "device_id": device_id,
         "client_id": client_id,
+        "device_name": name,
         "kw": str(random.randint(0, 1000)),
         "timestamp": str(datetime.now(pytz.utc))
     }
@@ -71,13 +73,14 @@ def run_generator(project_id, topic_name):
         clients[client_id] = []
         for n in range (0, num_devices):
             device_id = str(uuid.uuid4())
-            clients[client_id].append(device_id)
-            
+            clients[client_id].append((device_id, lista_devices[n]))
+
+    print(clients)          
     try:
         while True:
             for client_id in clients:
-                 for device_id in clients[client_id]:
-                    message = generateMockData(client_id, device_id)
+                 for device in clients[client_id]:
+                    message = generateMockData(client_id, device[0], device[1])
                     print(message)
                     pubsub_class.publishMessages(message)
                     #it will be generated a transaction each 2 seconds

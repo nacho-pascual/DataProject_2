@@ -50,6 +50,12 @@ def edemData(output_table):
         "fields": [
             {
                 "mode": "NULLABLE",
+                "name": "device_name",
+                "type" : "STRING"
+
+            },
+            {
+                "mode": "NULLABLE",
                 "name": "device_id",
                 "type" : "STRING"
 
