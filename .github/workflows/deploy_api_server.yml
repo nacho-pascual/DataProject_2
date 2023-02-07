@@ -75,7 +75,7 @@ jobs:
 
       - name: Getting tag of the built image
         run: |-
-          image_tag=$(gcloud container images list-tags gcr.io/${{ env.PROJECT_ID }}/${{ env.API_SERVICE_NAME }} --limit=1 --sort-by=~TIMESTAMP --format='get(tags)')
+          image_tag=$(gcloud container images list-tags gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }} --limit=1 --sort-by=~TIMESTAMP --format='get(tags)')
           IFS=';' read -ra image_tag_ARRAY <<< "$image_tag"
           image_tag=${image_tag_ARRAY[0]}
           echo "image_tag: $image_tag"     
