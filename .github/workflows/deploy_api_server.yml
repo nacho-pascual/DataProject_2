@@ -85,8 +85,8 @@ jobs:
         uses: hashicorp/setup-terraform@v2.0.3
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
+        working-directory: ./04_API
         run: |-
-          cd 04_API
           echo "image_tag: ${{ env.image_tag }}"
           terraform init
         env:
@@ -97,8 +97,8 @@ jobs:
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        run: |-
-          cd 04_API
+        working-directory: ./04_API
+        run: |
           terraform plan -lock=false
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
@@ -111,8 +111,8 @@ jobs:
       # Apply the execution plan
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: |-
-          cd 04_API
+        working-directory: ./04_API
+        run: |
           terraform apply -lock=false -auto-approve
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
