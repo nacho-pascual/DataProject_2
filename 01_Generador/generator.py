@@ -87,7 +87,7 @@ def run_generator(project_id, topic_name):
                     if lista_devices[n] == "TV":
                         kw = str(random.uniform(0.40, 0.80))
                     elif lista_devices[n] == "horno":
-                        kw = str(random.uniform(1.20,1.40))
+                        kw = str(random.uniform(1.20, 1.40))
                     elif lista_devices[n] == "microondas":
                         kw = str(random.uniform(1.00, 1.50))
                     elif lista_devices[n] == "nevera":
