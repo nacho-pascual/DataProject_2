@@ -57,7 +57,7 @@ def generateMockData(client_id, device_id, name):
         "client_id": client_id,
         "device_name": name,
         "kw": str(random.randint(0, 1000)),
-        "timestamp": str(datetime.now(pytz.utc))
+        "timestamp": str(datetime.utcnow())
     }
 
 def run_generator(project_id, topic_name):
