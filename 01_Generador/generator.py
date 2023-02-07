@@ -84,16 +84,16 @@ def run_generator(project_id, topic_name):
         while True:
             for client_id in clients:
                  for device in clients[client_id]:
-                    if lista_devices[n] == "TV":
-                        kw = str(random.uniform(0.40, 0.80))
-                    elif lista_devices[n] == "horno":
-                        kw = str(random.uniform(1.20, 1.40))
-                    elif lista_devices[n] == "microondas":
-                        kw = str(random.uniform(1.00, 1.50))
-                    elif lista_devices[n] == "nevera":
-                        kw = str(random.uniform(0.48, 0.78))
-                    elif lista_devices[n] == "lavadora":
-                        kw = str(random.uniform(1.80, 2.20))
+                    if device[1] == "TV":
+                        kw = random.uniform(0.40, 0.80)
+                    elif device[1] == "horno":
+                        kw = random.uniform(1.20, 1.40)
+                    elif device[1] == "microondas":
+                        kw = random.uniform(1.00, 1.50)
+                    elif device[1] == "nevera":
+                        kw = random.uniform(0.48, 0.78)
+                    elif device[1] == "lavadora":
+                        kw = random.uniform(1.80, 2.20)
                     message = generateMockData(client_id, device[0], device[1], kw)
                     print(message)
                     pubsub_class.publishMessages(message)
