@@ -28,11 +28,11 @@
     {
       "mode": "NULLABLE",
       "name": "kw",
-      "type": "NUMERIC"
+      "type": "STRING"
     },
     {
       "mode": "NULLABLE",
-      "name": "processingTime",
+      "name": "processing_time",
       "type": "STRING"
     }
     ]
