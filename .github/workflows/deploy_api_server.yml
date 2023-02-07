@@ -96,7 +96,9 @@ jobs:
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        run: terraform plan -lock=false
+        run: |-
+          cd 04_API
+          terraform plan -lock=false
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
@@ -108,7 +110,9 @@ jobs:
       # Apply the execution plan
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -lock=false -auto-approve
+        run: |-
+          cd 04_API
+          terraform apply -lock=false -auto-approve
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
