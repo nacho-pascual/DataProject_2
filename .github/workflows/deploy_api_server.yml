@@ -43,7 +43,7 @@ jobs:
         docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest
 
   check-terraform-security:
-    needs: build-and-push-container-image
+    needs: build-and-push-api-server
 
     runs-on: ubuntu-latest
 
