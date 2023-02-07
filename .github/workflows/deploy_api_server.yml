@@ -86,8 +86,8 @@ jobs:
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         working-directory: ./04_API
-        run: |-
-          echo "image_tag: ${{ env.image_tag }}"
+        run: |
+          echo "image_tag: ${{ env.image_tag }} pwd: ${pwd}"
           terraform init
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
@@ -98,8 +98,7 @@ jobs:
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         working-directory: ./04_API
-        run: |
-          terraform plan -lock=false
+        run: terraform plan -lock=false
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
@@ -112,8 +111,7 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         working-directory: ./04_API
-        run: |
-          terraform apply -lock=false -auto-approve
+        run: terraform apply -lock=false -auto-approve
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
