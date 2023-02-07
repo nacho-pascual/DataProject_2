@@ -13,7 +13,7 @@ app.logger.setLevel(gunicorn_logger.level)
 
 
 def franja_horaria(str_timestamp):
-    dt = datetime.strptime(str_timestamp, '%Y-%m-%d %H:%M:%S.%f%z')
+    dt = datetime.strptime(str_timestamp, '%Y-%m-%d %H:%M:%S.%f')
     # Convertir de UTC a tiempo local
     dt = dt.replace(tzinfo=pytz.timezone('Europe/Madrid')).astimezone()
     hour = dt.hour
