@@ -30,14 +30,13 @@ def franja_horaria(str_timestamp):
 
 @app.route("/status", methods=['GET'])
 def get_status():
-    app.logger.info("checking health of application")
     return jsonify({"status": "OK"})
 
 
 @app.route('/franjas', methods=['POST'])
 def franjas():
     message = request.get_json()
-    print(message)
+    # print(message)
     message['franja'] = franja_horaria(message['timestamp'])
 
     return jsonify(message)

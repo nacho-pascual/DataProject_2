@@ -12,11 +12,6 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "device_name",
-      "type": "STRING"
-    },    
-    {
-      "mode": "NULLABLE",
       "name": "client_id",
       "type": "STRING"
     },
@@ -32,7 +27,7 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "processing_time",
+      "name": "franja",
       "type": "STRING"
     }
     ]
