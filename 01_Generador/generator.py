@@ -25,7 +25,7 @@ parser.add_argument(
                 help='PubSub topic name.')
 
 args, opts = parser.parse_known_args()
-
+print(args)
 class PubSubMessages:
     """ Publish Messages in our PubSub Topic """
 

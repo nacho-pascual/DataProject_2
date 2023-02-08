@@ -77,12 +77,6 @@ def edemData(output_table):
                 "name": "timestamp",
                 "type" : "STRING"
 
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "processingTime",
-                "type": "STRING"
-
             }
         ]
     }
@@ -90,16 +84,33 @@ def edemData(output_table):
     def print_data(elem):
         print(elem)
         return elem
+    
+
+    #Create DoFn Class to add Window processing time and encode message to publish into PubSub
+    class add_processing_time(beam.DoFn):
+        def process(self, element):
+            window_start = str(datetime.datetime.utcnow())
+            output_data = {'agg_kw': element, 'processing_time': window_start}
+            output_json = json.dumps(output_data)
+            yield output_json.encode('utf-8')
+
+    #Create DoFn Class to extract kw from data
+    class agg_kw(beam.DoFn):
+        def process(self, element):
+            kw = int(element['kw'])
+            yield kw
+
 
     #Create pipeline
     #First of all, we set the pipeline options
-    options = PipelineOptions(save_main_session=True, streaming=True)
+    options = PipelineOptions(save_main_session=True, streaming=True, project = "psyched-freedom-376515")
     with beam.Pipeline(options=options) as p:
 
+        
         #Part01: we create pipeline from PubSub to BigQuery
         data = (
             #Read messages from PubSub
-            p | "Read messages from PubSub" >>  beam.io.ReadFromPubSub(subscription=f"projects/psyched-freedom-376515/subscriptions/{output_table}-sub", with_attributes=True)
+            p | "Read messages from PubSub" >>  beam.io.ReadFromPubSub(subscription=f"projects/psyched-freedom-376515/subscriptions/consumption-sub", with_attributes=True)
             #Parse JSON messages with Map Function and adding Processing timestamp
               | "Parse JSON messages" >> beam.Map(parse_json_message)
               |"Print">>beam.Map(print_data)
@@ -108,7 +119,7 @@ def edemData(output_table):
         #Part02: Write proccessing message to their appropiate sink
         #Data to Bigquery
         (data | "Write to BigQuery" >>  beam.io.WriteToBigQuery(
-            table = f"psyched-freedom-376515:prueba1feb.{output_table}",
+            table = f"psyched-freedom-376515:prueba1feb.prueba",
             schema = schema,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
@@ -116,13 +127,14 @@ def edemData(output_table):
 
         #Part03: Count temperature per minute and put that data into PubSub
         #Create a fixed window (1 min duration)
-        #(data 
-            #| "Get temperature value" >> beam.ParDo(agg_temperature())
-            #| "WindowByMinute" >> beam.WindowInto(window.FixedWindows(60))
-            #| "MeanByWindow" >> beam.CombineGlobally(MeanCombineFn()).without_defaults()
-            #| "Add Window ProcessingTime" >>  beam.ParDo(add_processing_time())
-            #| "WriteToPubSub" >>  beam.io.WriteToPubSub(topic="projects/psyched-fredoom-376515/topics/iotToCloudFunctions", with_attributes=False)
-        #)
+        (data 
+            | "Get kw value" >> beam.ParDo(agg_kw())
+            | "WindowByMinute" >> beam.WindowInto(window.FixedWindows(60))
+            | "MeanByWindow" >> beam.CombineGlobally(MeanCombineFn()).without_defaults()
+            | "Add Window ProcessingTime" >>  beam.ParDo(add_processing_time())
+            | "Print output">>beam.Map(print_data)
+            | "WriteToPubSub" >>  beam.io.WriteToPubSub(topic=f"projects/psyched-freedom-376515/topics/output_consumption", with_attributes=False)
+        )
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

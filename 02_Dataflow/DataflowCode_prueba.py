@@ -58,7 +58,7 @@ class agg_kw(beam.DoFn):
 #Call API consumption data perid
 
 #   Dataflow Process 
-def runDataflow():
+def runDataflow(output_table):
     #Input arguments
     parser = argparse.ArgumentParser(description=('Dataflow pipeline.'))
     parser.add_argument(
@@ -95,15 +95,14 @@ def runDataflow():
 
     args, opts = parser.parse_known_args()        
 
-    print(args)
     #    """ BigQuery Table Schemas """
 
     #Consumption table
     with open(args.bigquery_schema_path_consumption) as file:
-        input_schema = json.load(file)
+       input_schema = json.load(file)
 
     schema = bigquery_tools.parse_table_schema_from_json(json.dumps(input_schema))
-    print(schema)
+
     #Testing function to dataflow
     def print_data(elem):
         print(elem)
@@ -122,6 +121,7 @@ def runDataflow():
               | "Parse JSON messages" >> beam.Map(parse_json_message)
               | "Print">>beam.Map(print_data)
         )
+
 
         #Part02: Write proccessing message to their appropiate sink
         #Data to Bigquery
