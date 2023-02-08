@@ -2,6 +2,7 @@
 import base64, json, sys, os
 from google.cloud import bigquery
 import logging
+import datetime
 
 #Read from PubSub
 def pubsub_to_bigquery(event, context):
@@ -23,12 +24,13 @@ def pubsub_to_bigquery(event, context):
 
     message.update({"kw":(int(message['kw']))})
 
-    if message["kw"]>=300 :
+    #Condition if we have the kw and the timestamp to delimite the consume in certain hours
+    if message["kw"] >= 300 and 24 <= datetime.datetime.fromtimestamp(message["timestamp"]).hour < 6:
         message.update({"kw":str(alerta)})
     else:
         message.update({"kw":str(message["kw"])})
 
-
+    
 
     logging.info(message)
 
