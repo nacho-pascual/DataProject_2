@@ -3,6 +3,7 @@ import base64, json, sys, os
 from google.cloud import bigquery
 import logging
 import datetime
+import requests
 
 #Read from PubSub
 def pubsub_to_bigquery(event, context):
@@ -30,7 +31,22 @@ def pubsub_to_bigquery(event, context):
     else:
         message.update({"kw":str(message["kw"])})
 
-    
+    #Trying a new code to connect to API and creating alerts for peak and valley hours
+    # Call API to get peak and valley hours
+    response = requests.get("API_URL_TO_RETRIEVE_PEAK_VALLEY_HOURS")
+    peak_hours = response.get("peak_hours")
+    valley_hours = response.get("valley_hours")
+
+    # Check if the current hour is a peak hour or valley hour
+    current_hour = datetime.datetime.fromtimestamp(message["timestamp"]).hour
+    if current_hour in peak_hours:
+        message.update({"price_category": "peak"})
+    elif current_hour in valley_hours:
+        message.update({"price_category": "valley"})
+    else:
+        message.update({"price_category": "normal"})
+
+
 
     logging.info(message)
 
