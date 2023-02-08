@@ -34,19 +34,17 @@ def pubsub_to_bigquery(event, context):
     #Trying a new code to connect to API and creating alerts for peak and valley hours
     # Call API to get peak and valley hours
     response = requests.get("API_URL_TO_RETRIEVE_PEAK_VALLEY_HOURS")
-    peak_hours = response.get("peak_hours")
-    valley_hours = response.get("valley_hours")
+    hora_punta = response.get("punta")
+    hora_llano = response.get("llano")
 
     # Check if the current hour is a peak hour or valley hour
     current_hour = datetime.datetime.fromtimestamp(message["timestamp"]).hour
-    if current_hour in peak_hours:
-        message.update({"price_category": "peak"})
-    elif current_hour in valley_hours:
-        message.update({"price_category": "valley"})
+    if current_hour in hora_punta:
+        message.update({"precio": "punta"})
+    elif current_hour in hora_llano:
+        message.update({"precio": "llano"})
     else:
-        message.update({"price_category": "normal"})
-
-
+        message.update({"precio": "media"})
 
     logging.info(message)
 
