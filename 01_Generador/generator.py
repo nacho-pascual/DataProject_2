@@ -10,6 +10,7 @@ from faker import Faker
 from datetime import datetime
 import pytz
 from google.cloud import pubsub_v1
+from datetime import datetime, timezone, timedelta
 
 fake = Faker()
 
@@ -46,7 +47,6 @@ class PubSubMessages:
             
 lista_devices = ["TV", "horno", "microondas", "nevera", "lavadora"]
 
-
 #Generator Code
 def generateMockData(client_id, device_id, name, kw):
 
@@ -78,27 +78,43 @@ def run_generator(project_id, topic_name):
         for n in range (0, num_devices):
             device_id = str(uuid.uuid4())
             clients[client_id].append((device_id, lista_devices[n]))
-
-    print(clients)          
+         
     try:
         while True:
-            for client_id in clients:
-                 for device in clients[client_id]:
-                    if device[1] == "TV":
-                        kw = random.uniform(0.40, 0.80)
-                    elif device[1] == "horno":
-                        kw = random.uniform(1.20,1.40)
-                    elif device[1] == "microondas":
-                        kw = random.uniform(1.00, 1.50)
-                    elif device[1] == "lavadora":
-                        kw = random.uniform(1.80, 2.20)
-                    elif device[1] == "nevera":
-                        kw = str(random.uniform(0.48, 0.78))
-                    message = generateMockData(client_id, device[0], device[1], kw)
-                    print(message)
-                    pubsub_class.publishMessages(message)
-                    #it will be generated a transaction each 2 seconds
-                    time.sleep(5)
+            # En febrero empiezan las recopilación de datos de un a casa
+            start = datetime(2023, 2, 1, tzinfo=timezone.utc)
+            # El 28 de febrero dejamos de tomar datos
+            end = datetime(2023, 2, 28, tzinfo=timezone.utc)
+            # Suponemos que tenemos una visita cada 1 segundo
+            delta_datos = timedelta(seconds=5)
+
+            while start < end:
+                start += delta_datos
+                def franja_horaria(str_timestamp):
+                    dt = datetime.strptime(str_timestamp, '%Y-%m-%d %H:%M:%S.%f')
+                    # Convertir de UTC a tiempo local
+                    dt = dt.replace(tzinfo=pytz.timezone('Europe/Madrid')).astimezone()
+                    hour = dt.hour   
+            
+                    for client_id in clients:
+                        for device in clients[client_id]:
+                            if device[1] == "TV" and hour in [14,15,21,22]:
+                                kw = random.uniform(0.40, 0.80)
+                            elif device[1] == "horno" and hour in [14,15,21,22]:
+                                kw = random.uniform(1.20,1.40) 
+                            elif device[1] == "microondas" and hour in [14,15,21,22]:
+                                kw = random.uniform(1.00, 1.50)
+                            elif device[1] == "lavadora" and hour in [14,15,21,22]:
+                                kw = random.uniform(1.80, 2.20)
+                            elif device[1] == "nevera" and hour in [14,15,21,22]:
+                                kw = str(random.uniform(0.48, 0.78))
+                            elif hour in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,16,17,18,19,20,23]:
+                                kw = str(random.uniform(0.01,0.05))
+                            message = generateMockData(client_id, device[0], device[1], kw)
+                            print(message)
+                            pubsub_class.publishMessages(message)
+                            #it will be generated a transaction each 2 seconds
+                            time.sleep(5)
     except Exception as err:
         logging.error("Error while inserting data into out PubSub Topic: %s", err)
     finally:
