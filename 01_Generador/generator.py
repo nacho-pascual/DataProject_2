@@ -101,23 +101,41 @@ def run_generator(project_id, topic_name):
                         kw = "0"
                         if device[1] == "TV" and hour in [9,10,11,12,13,15,16,17,18]:
                             kw = random.uniform(0.40, 0.80)
+                        elif  device[1] == "TV" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         elif device[1] == "aire acondicionado" and hour in [9,10,11,12,13,14,15,16,17,18]:
                             kw = random.uniform(1.32,1.98) 
+                        elif  device[1] == "aire acondicionado" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         elif device[1] == "microondas" and hour in [14]:
                             kw = random.uniform(1.00, 1.50)
+                        elif  device[1] == "microondas" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         elif device[1] == "cafetera" and hour in [9,11,15]:
                             kw = random.uniform(0.72, 0.90)
+                        elif  device[1] == "cafetera" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         elif device[1] == "ordenador" and hour in [9,10,11,12,13,15,16,17,18]:
                             kw = str(random.uniform(0.20, 0.30))
+                        elif  device[1] == "ordenador" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         elif device[1] == "lampara" and hour in [9,10,11,12,13,14,15,16,17,18]:
                             kw = str(random.uniform(0.01, 0.015))
+                        elif  device[1] == "lampara" and hour in [1,2] and start == "2023-02-02":
+                            kw = random.uniform(5.6,6.7) 
                         else:
                             kw = str(random.uniform(0.001,0.005))
+                        # if start == "2023-02-01" and hour in [0,1]:
+                        #     kw = random.uniform(5,6)
+                        # elif start == "2023-02-15" and hour in [0,1]:
+                        #     kw = random.uniform(5,6)
+                        # elif start == "2023-02-28" and hour in [0,1]:
+                        #     kw = random.uniform(5,6)
                         message = generateMockData(client_id, device[0], device[1], kw, str(start))
                         print(message)
                         pubsub_class.publishMessages(message)
                         #it will be generated a transaction each 2 seconds
-                        #time.sleep(1)
+                        # time.sleep(1)
 
     except Exception as err:
         logging.error("Error while inserting data into out PubSub Topic: %s", err)
