@@ -106,7 +106,7 @@ def runDataflow():
     #Create DoFn Class to extract kw from data
     class agg_kw(beam.DoFn):
         def process(self, element):
-            kw = int(element['kw'])
+            kw = round(float(element['kw']), 3)
             yield kw
 
 
