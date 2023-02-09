@@ -47,6 +47,7 @@ class PubSubMessages:
             
 lista_devices = ["TV", "aire acondicionado", "microondas", "cafetera", "ordenador", "lampara"]
 
+
 #Generator Code
 def generateMockData(client_id, device_id, name, kw, hour):
 
@@ -57,7 +58,7 @@ def generateMockData(client_id, device_id, name, kw, hour):
         "device_id": device_id,
         "client_id": client_id,
         "device_name": name,
-        "kw": kw,
+        "kw": kw
         "timestamp": hour 
     }
 
@@ -117,6 +118,7 @@ def run_generator(project_id, topic_name):
                         pubsub_class.publishMessages(message)
                         #it will be generated a transaction each 2 seconds
                         #time.sleep(1)
+
     except Exception as err:
         logging.error("Error while inserting data into out PubSub Topic: %s", err)
     finally:

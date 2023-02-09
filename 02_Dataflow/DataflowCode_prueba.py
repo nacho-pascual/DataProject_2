@@ -51,14 +51,14 @@ class add_processing_time(beam.DoFn):
 #Create DoFn Class to extract kw from data
 class agg_kw(beam.DoFn):
     def process(self, element):
-        kw = element['kw']
+        kw = int(element['kw'])
         yield kw
 
 
 #Call API consumption data perid
 
 #   Dataflow Process 
-def runDataflow():
+def runDataflow(output_table):
     #Input arguments
     parser = argparse.ArgumentParser(description=('Dataflow pipeline.'))
     parser.add_argument(
@@ -69,10 +69,10 @@ def runDataflow():
                 '--topic_name',
                 required=True,
                 help='PubSub topic name.')
-    parser.add_argument(
-                '--hostname',
-                required=True,
-                help='API Hostname provided during the session.')
+    #parser.add_argument(
+    #            '--hostname',
+    #           required=True,
+    #            help='API Hostname provided during the session.')
     parser.add_argument(
                 '--input_subscription',
                 required=True,
@@ -95,12 +95,11 @@ def runDataflow():
 
     args, opts = parser.parse_known_args()        
 
-
     #    """ BigQuery Table Schemas """
 
     #Consumption table
     with open(args.bigquery_schema_path_consumption) as file:
-        input_schema = json.load(file)
+       input_schema = json.load(file)
 
     schema = bigquery_tools.parse_table_schema_from_json(json.dumps(input_schema))
 
@@ -111,7 +110,7 @@ def runDataflow():
 
     #Create pipeline
     #First of all, we set the pipeline options
-    options = PipelineOptions(save_main_session=True, streaming=True)
+    options = PipelineOptions(save_main_session=True, streaming=True, project = args.project_id)
     with beam.Pipeline(options=options) as p:
 
         #Part01: we create pipeline from PubSub to BigQuery
@@ -123,10 +122,11 @@ def runDataflow():
               | "Print">>beam.Map(print_data)
         )
 
+
         #Part02: Write proccessing message to their appropiate sink
         #Data to Bigquery
         (data | "Write to BigQuery" >>  beam.io.WriteToBigQuery(
-            table = f"{args.project_id}:{args.project_id}.{args.output_bigquery_consumption}",
+            table = f"{args.project_id}:prueba1feb.{args.output_bigquery_consumption}",
             schema = schema,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
@@ -139,8 +139,10 @@ def runDataflow():
             | "WindowByMinute" >> beam.WindowInto(window.FixedWindows(60))
             | "MeanByWindow" >> beam.CombineGlobally(MeanCombineFn()).without_defaults()
             | "Add Window ProcessingTime" >>  beam.ParDo(add_processing_time())
+            | "Print output">>beam.Map(print_data)
             | "WriteToPubSub" >>  beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
         )
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

@@ -13,7 +13,7 @@ app.logger.setLevel(gunicorn_logger.level)
 
 
 def franja_horaria(str_timestamp):
-    dt = datetime.strptime(str_timestamp, '%Y-%m-%d %H:%M:%S.%f%z')
+    dt = datetime.strptime(str_timestamp, '%Y-%m-%d %H:%M:%S.%f')
     # Convertir de UTC a tiempo local
     dt = dt.replace(tzinfo=pytz.timezone('Europe/Madrid')).astimezone()
     hour = dt.hour
@@ -30,14 +30,13 @@ def franja_horaria(str_timestamp):
 
 @app.route("/status", methods=['GET'])
 def get_status():
-    app.logger.info("checking health of application")
     return jsonify({"status": "OK"})
 
 
 @app.route('/franjas', methods=['POST'])
 def franjas():
     message = request.get_json()
-    print(message)
+    # print(message)
     message['franja'] = franja_horaria(message['timestamp'])
 
     return jsonify(message)
