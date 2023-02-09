@@ -58,7 +58,7 @@ def generateMockData(client_id, device_id, name, kw, hour):
         "device_id": device_id,
         "client_id": client_id,
         "device_name": name,
-        "kw": kw
+        "kw": kw,
         "timestamp": hour 
     }
 
