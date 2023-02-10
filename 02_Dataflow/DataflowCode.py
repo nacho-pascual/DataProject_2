@@ -67,7 +67,7 @@ def runDataflow():
     parser.add_argument(
         '--bigquery_schema_path',
         required=False,
-        default='./Schemas/bq_schema_consumption.json',
+        default='./schemas/bq_schema_consumption.json',
         help='BigQuery Schema Path consumption within the repository.')
 
     args, opts = parser.parse_known_args()
