@@ -19,32 +19,21 @@ def pubsub_to_bigquery(event, context):
 
     #Load Json
     message = json.loads(pubsub_message)
+    message["state"]= ""
 
     #if message["kw"]>=100:
-    alerta="El consumo esta sobrepasado la estimacion para este periodo"
+    alerta="Consumption is above the estimate"
+    normal="Consumption is within estimate"
 
-    message.update({"kw":(int(message['kw']))})
+    message.update({"aggkw":(int(message['aggkw']))})
 
     #Condition if we have the kw and the timestamp to delimite the consume in certain hours
-    if message["kw"] >= 300 and 24 <= datetime.datetime.fromtimestamp(message["timestamp"]).hour < 6:
-        message.update({"kw":str(alerta)})
+    if message["aggkw"] >= 500 and 24 <= datetime.datetime.fromtimestamp(message["timestamp"]).hour < 7:
+        message.update({"aggkw":str(message["aggkw"])})
+        message.update({"state":str(alerta)})
     else:
-        message.update({"kw":str(message["kw"])})
-
-    #Trying a new code to connect to API and creating alerts for peak and valley hours
-    # Call API to get peak and valley hours
-    response = requests.get("API_URL_TO_RETRIEVE_PEAK_VALLEY_HOURS")
-    hora_punta = response.get("punta")
-    hora_llano = response.get("llano")
-
-    # Check if the current hour is a peak hour or valley hour
-    current_hour = datetime.datetime.fromtimestamp(message["timestamp"]).hour
-    if current_hour in hora_punta:
-        message.update({"precio": "punta"})
-    elif current_hour in hora_llano:
-        message.update({"precio": "llano"})
-    else:
-        message.update({"precio": "media"})
+        message.update({"aggkw":str(message["aggkw"])})
+        message.update({"state":str(normal)})
 
     logging.info(message)
 
