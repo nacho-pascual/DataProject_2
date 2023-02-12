@@ -1,0 +1,4 @@
+Faker
+argparse
+google-cloud-pubsub
+google-auth
