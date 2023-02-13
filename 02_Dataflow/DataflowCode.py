@@ -47,10 +47,10 @@ def runDataflow():
         '--project_id',
         required=True,
         help='GCP cloud project name.')
-    parser.add_argument(
-        '--api_url',
-        required=True,
-        help='API Server.')
+    #parser.add_argument(
+    #    '--api_url',
+    #    required=True,
+    #    help='API Server.')
     parser.add_argument(
         '--input_subscription',
         required=True,
@@ -121,7 +121,7 @@ def runDataflow():
             p | "Read messages from PubSub" >> beam.io.ReadFromPubSub(subscription=f"projects/{args.project_id}/subscriptions/{args.input_subscription}", with_attributes=True)
             #Parse JSON messages with Map Function and adding Processing timestamp
               | "Parse JSON messages" >> beam.Map(parse_json_message)
-              | "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
+              #| "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
               | "Print" >> beam.Map(print_data)
         )
 
