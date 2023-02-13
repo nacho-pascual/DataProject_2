@@ -2,7 +2,7 @@
 import base64, json, sys, os
 from google.cloud import bigquery
 import logging
-import datetime
+from datetime import datetime
 import requests
 
 #Read from PubSub
@@ -42,6 +42,10 @@ def pubsub_to_bigquery(event, context):
         print('La franja horaria correspondiente a la marca de tiempo {} es {}'.format(timestamp, respuesta_json['franja']))
     else:
         print('Se produjo un error al enviar la solicitud: ', response.status_code)
+
+
+    #Condition if we have the kw and the timestamp to delimite the consume in certain hours
+    message.update({"aggkw":(int(message['aggkw']))})
 
     # Condiciones para estructurar los mensajes recibidos
     if message["aggkw"] >= 1000 and 6 >= datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour >= 20 and respuesta_json['franja'] == "punta" or message["aggkw"] >= 600 and 24 <= datetime.strptime(message["timestamp"] , "%Y-%m-%d %H:%M:%S.%f").hour <= 6:
