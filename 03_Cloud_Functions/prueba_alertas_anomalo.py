@@ -26,9 +26,11 @@ def pubsub_to_bigquery(event, context):
     normal="Consumption is within estimate"
 
     message.update({"aggkw":(int(message['aggkw']))})
+    
+    
 
     #Condition if we have the kw and the timestamp to delimite the consume in certain hours
-    if message["aggkw"] >= 500 and 24 <= datetime.datetime.fromtimestamp(message["timestamp"]).hour < 7:
+    if message["aggkw"] >= 500 and 24 <= datetime.strptime(message["timestamp"] , "%Y-%m-%d %H:%M:%S.%f").hour < 7:
         message.update({"aggkw":str(message["aggkw"])})
         message.update({"state":str(alerta)})
     else:
