@@ -40,12 +40,12 @@ def pubsub_to_bigquery(event, context):
     elif current_hour in hora_llano:
         message.update({"precio": "llano"})
     else:
-        message.update({"precio": "media"})
+        message.update({"precio": "valle"})
     
      #Condition if we have the kw and the timestamp to delimite the consume in certain hours
     message.update({"aggkw":(int(message['aggkw']))})
 
-    if message["aggkw"] >= 1000 and 6 >= datetime.datetime.fromtimestamp(message["timestamp"]).hour >= 20 and message["precio"] == "punta":
+    if message["aggkw"] >= 1000 and 6 >= datetime.datetime.fromtimestamp(message["timestamp"]).hour >= 20 and message["precio"] == "punta" or message["aggkw"] >= 600 and 24 <= datetime.strptime(message["timestamp"] , "%Y-%m-%d %H:%M:%S.%f").hour < 7:
         message.update({"aggkw":str(message["aggkw"])})
         message.update({"state":str(alerta)})
     elif 700 <= message["aggkw"] <= 1000 and 6 >= datetime.datetime.fromtimestamp(message["timestamp"]).hour >= 20 and message["precio"] == "llano":
