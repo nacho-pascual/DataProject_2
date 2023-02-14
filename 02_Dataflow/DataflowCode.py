@@ -39,10 +39,10 @@ def runDataflow():
         '--project_id',
         required=True,
         help='GCP cloud project name.')
-    #parser.add_argument(
-    #    '--api_url',
-    #    required=True,
-    #    help='API Server.')
+    parser.add_argument(
+       '--api_url',
+       required=True,
+       help='API Server.')
     parser.add_argument(
         '--input_subscription',
         required=True,
@@ -118,7 +118,7 @@ def runDataflow():
             yield json.dumps(element).encode('utf-8')
 
     def format_aggr(elem):
-        return [{'client_id': client_id, 'kw': round(kw, 3)} for client_id, kw in elem.items()]
+        return [{'client_id': client_id, 'kw': round(kw / 60, 3)} for client_id, kw in elem.items()]
 
     def print_data(elem):
         print(elem)
@@ -139,8 +139,8 @@ def runDataflow():
                 table = f"{args.project_id}:{args.output_bigquery}",
                 schema = schema,
                 create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
-                write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
-        ))
+                write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND)
+         )
 
         # Aggregate KW by client ID and write to output PubSub
         (data
