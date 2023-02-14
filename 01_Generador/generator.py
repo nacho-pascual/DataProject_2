@@ -48,7 +48,6 @@ lista_devices = ["TV", "aire acondicionado", "microondas", "cafetera", "ordenado
 #Generator Code
 def generateMockData(client_id, device_id, name, kw, timestamp):
 
-
     #Return values
     return {
 
