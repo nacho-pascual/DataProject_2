@@ -48,7 +48,7 @@ que luego utilizaremos para construir el Dataflow Flex Template.
  ## **BigQuery**
 
 En [BigQuery](https://console.cloud.google.com/bigquery) creamos dos tablas para almacenar los datos que ingestamos de los 
-dispostivos. Para ello hemos creado un dataset llamado `vidamajuna` donde se encuentra las tablas `consumption` y la tabla `alertas`.
+dispostivos. Para ello hemos creado un dataset llamado `vidamajuna` donde se encuentra las tablas `consumption` y `alertas`.
 
 1. `consumption` alamacemará los datos del consumo de nuestros clientes.
 
@@ -86,7 +86,7 @@ docker push gcr.io/psyched-freedom-376515/api-server:latest
 gcloud run deploy api-server --image gcr.io/psyched-freedom-376515/api-server:latest
 ```
 
-5. Para parar el servicio hay qye destruir la imagen
+5. Para parar el servicio hay que destruir la imagen
 ```shell
 gcloud run services delete api-server --region=eu-west1
 ```
@@ -175,3 +175,5 @@ Finalmente, desde Data Studio se leen directamente los datos de BigQuery y se mu
 
 
  ## **Video del funcionamiento**
+ 
+ https://youtu.be/ryDZf7PGPso
