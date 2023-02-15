@@ -24,7 +24,7 @@ EDEM ha creado el día 18 de Marzo un evento de lanzamiento de empresas con prod
 # Tecnología
 ## Arquitectura
 
-![ARQUITECTURA](./00_tmp/Imagenes/Diagrama de arquitectura.png)
+![ARQUITECTURA](./00_tmp/Imagenes/arquitectura.png)
 
 
 ## Configuración del sistema
