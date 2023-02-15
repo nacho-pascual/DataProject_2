@@ -7,37 +7,29 @@ import logging
 import time
 import apache_beam as beam
 from apache_beam.options.pipeline_options import (PipelineOptions, StandardOptions)
-from apache_beam.transforms.combiners import MeanCombineFn
-from apache_beam.transforms.combiners import CountCombineFn
-from apache_beam.transforms.core import CombineGlobally
 import apache_beam.transforms.window as window
 from apache_beam.io.gcp.bigquery import parse_table_schema_from_json
 from apache_beam.io.gcp import bigquery_tools
-import datetime
+from datetime import datetime
+import time
 import requests
+
 
 #ParseJson Function
 #Get data from PubSub and parse them
 
 def parse_json_message(message):
-    '''Mapping message from PubSub'''
-    #Mapping message from PubSub
-    #DecodePubSub message in order to deal with
+    # Decode PubSub message
     pubsubmessage = message.data.decode('utf-8')
+
     #Get messages attributes
-    attributes = message.attributes
-
+    # attributes = message.attributes
     #Print through console and check that everything is fine.
-    logging.info("Receiving message from PubSub:%s", message)
-    logging.info("with attributes: %s", attributes)
-
+    # logging.info("Receiving message from PubSub:%s", message)
+    # logging.info("with attributes: %s", attributes)
     #Convert string decoded in json format(element by element)
     row = json.loads(pubsubmessage)
 
-    #Add Processing Time (new column)
-    # row["processingTime"] = str(datetime.datetime.now())
-
-    #Return function
     return row
 
 
@@ -48,9 +40,9 @@ def runDataflow():
         required=True,
         help='GCP cloud project name.')
     parser.add_argument(
-        '--api_url',
-        required=True,
-        help='API Server.')
+       '--api_url',
+       required=True,
+       help='API Server.')
     parser.add_argument(
         '--input_subscription',
         required=True,
@@ -78,15 +70,13 @@ def runDataflow():
 
     schema = bigquery_tools.parse_table_schema_from_json(json.dumps(input_schema))
 
-    def print_data(elem):
-        print(elem)
-        return elem
-
     class ApiRequestClass(beam.DoFn):
         def __init__(self, api_url):
             self.api_url = api_url
 
         def process(self, element):
+            if self.api_url is None:
+                return element
             # Make API Request
             try:
                 rsp = requests.post(self.api_url, json=element)
@@ -95,55 +85,74 @@ def runDataflow():
             except Exception as err:
                 logging.error("Error while trying to call to the API: %s", err)
 
-    #Create DoFn Class to add Window processing time and encode message to publish into PubSub
-    class add_processing_time(beam.DoFn):
+    class TotalKwByClientFn(beam.CombineFn):
+        def create_accumulator(self):
+            return {}
+
+        def add_input(self, accumulator, input):
+            client_id = input['client_id']
+            if client_id not in accumulator:
+                accumulator[client_id] = 0
+            accumulator[client_id] += float(input['kw'])
+            return accumulator
+
+        def merge_accumulators(self, accumulators):
+            merged = { }
+            for accum in accumulators:
+                for item, kw in accum.items():
+                    if item not in merged:
+                        merged[item] = 0
+                    merged[item] += round(kw, 3)
+            return merged
+
+        def extract_output(self, accumulator):
+            return accumulator
+
+    class AddTimestamp(beam.DoFn):
+        def process(self, element, timestamp=beam.DoFn.TimestampParam, window=beam.DoFn.WindowParam, pane_info=beam.DoFn.PaneInfoParam):
+            element['timestamp'] = str(datetime.utcnow())
+            yield element
+
+    class OutputFormatDoFn(beam.DoFn):
         def process(self, element):
-            window_start = str(datetime.datetime.utcnow())
-            output_data = {'agg_kw': element, 'processing_time': window_start}
-            output_json = json.dumps(output_data)
-            yield output_json.encode('utf-8')
+            yield json.dumps(element).encode('utf-8')
 
-    #Create DoFn Class to extract kw from data
-    class agg_kw(beam.DoFn):
-        def process(self, element):
-            kw = round(float(element['kw']), 3)
-            yield kw
+    def format_aggr(elem):
+        return [{'client_id': client_id, 'kw': round(kw / 60, 3)} for client_id, kw in elem.items()]
 
+    def print_data(elem):
+        print(elem)
+        return elem
 
-    #Create pipeline
-    #First of all, we set the pipeline options
     options = PipelineOptions(save_main_session=True, streaming=True, project=args.project_id)
     with beam.Pipeline(options=options) as p:
-        
-        #Part01: we create pipeline from PubSub to BigQuery
+        # Read from PubSub, parse messages and call API to tag the data
         data = (
-            #Read messages from PubSub
             p | "Read messages from PubSub" >> beam.io.ReadFromPubSub(subscription=f"projects/{args.project_id}/subscriptions/{args.input_subscription}", with_attributes=True)
-            #Parse JSON messages with Map Function and adding Processing timestamp
               | "Parse JSON messages" >> beam.Map(parse_json_message)
-              | "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
-              | "Print" >> beam.Map(print_data)
+              # | "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
         )
 
-        #Part02: Write proccessing message to their appropiate sink
-        #Data to Bigquery
-        (data | "Write to BigQuery" >> beam.io.WriteToBigQuery(
-            table = f"{args.project_id}:{args.output_bigquery}",
-            schema = schema,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
-            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND
-        ))
-
-        #Part03: Count temperature per minute and put that data into PubSub
-        #Create a fixed window (1 min duration)
+        # Write message to Bigquery
         (data
-            | "Get kw value" >> beam.ParDo(agg_kw())
-            | "WindowByMinute" >> beam.WindowInto(window.FixedWindows(60))
-            | "MeanByWindow" >> beam.CombineGlobally(MeanCombineFn()).without_defaults()
-            | "Add Window ProcessingTime" >> beam.ParDo(add_processing_time())
-            | "Print output">> beam.Map(print_data)
-            | "WriteToPubSub" >>  beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
-        )
+            | "Write to BigQuery" >> beam.io.WriteToBigQuery(
+                table = f"{args.project_id}:{args.output_bigquery}",
+                schema = schema,
+                create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+                write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND)
+         )
+
+        # Aggregate KW by client ID and write to output PubSub
+        (data
+            | "WindowByHour" >> beam.WindowInto(window.FixedWindows(60))
+            | "TotalByClientByWindow" >> beam.CombineGlobally(TotalKwByClientFn()).without_defaults()
+            | "Format aggregation" >> beam.FlatMap(format_aggr)
+            | "Add timestamp" >> beam.ParDo(AddTimestamp())
+            | "OutputFormat" >> beam.ParDo(OutputFormatDoFn())
+            | "Print" >> beam.Map(print_data)
+            | "WriteToPubSub" >> beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
+         )
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
