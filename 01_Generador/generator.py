@@ -21,6 +21,11 @@ parser.add_argument(
                 '--topic_name',
                 required=True,
                 help='PubSub topic name.')
+parser.add_argument(
+                '--client_id',
+                required=False,
+                default='1',
+                help='Client ID to use in PubSub messages.')
 
 args, opts = parser.parse_known_args()
 
@@ -65,19 +70,21 @@ def run_generator(project_id, topic_name):
     #Publish message into the queue every 5 seconds
     clients = { }
 
-    num_clients = 5
+    # num_clients = 5
     num_devices = 5
 
 
-    for i in range (0, num_clients):
-        client_id = str(uuid.uuid4())
-        clients[client_id] = []
-        for n in range (0, num_devices):
-            device_id = str(uuid.uuid4())
-            clients[client_id].append((device_id, lista_devices[n]))
-    print(clients)
-    try:
+    # for i in range (0, num_clients):
+    client_id = f"client_{args.client_id}"
+    clients[client_id] = []
 
+    for n in range(0, num_devices):
+        device_id = f"device_{n + 1}"
+        clients[client_id].append((device_id, lista_devices[n]))
+
+    print(clients)
+
+    try:
         while True:
             timestamp = datetime.utcnow()
             for client_id in clients:
