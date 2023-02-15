@@ -130,7 +130,8 @@ def runDataflow():
         data = (
             p | "Read messages from PubSub" >> beam.io.ReadFromPubSub(subscription=f"projects/{args.project_id}/subscriptions/{args.input_subscription}", with_attributes=True)
               | "Parse JSON messages" >> beam.Map(parse_json_message)
-              # | "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
+              | "Call API Server" >> beam.ParDo(ApiRequestClass(args.api_url))
+              # | "Print 1" >> beam.Map(print_data)
         )
 
         # Write message to Bigquery
@@ -149,7 +150,7 @@ def runDataflow():
             | "Format aggregation" >> beam.FlatMap(format_aggr)
             | "Add timestamp" >> beam.ParDo(AddTimestamp())
             | "OutputFormat" >> beam.ParDo(OutputFormatDoFn())
-            | "Print" >> beam.Map(print_data)
+            # | "Print" >> beam.Map(print_data)
             | "WriteToPubSub" >> beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
          )
 
