@@ -70,6 +70,7 @@ def runDataflow():
 
     schema = bigquery_tools.parse_table_schema_from_json(json.dumps(input_schema))
 
+    # Llamada a la API
     class ApiRequestClass(beam.DoFn):
         def __init__(self, api_url):
             self.api_url = api_url
@@ -85,6 +86,7 @@ def runDataflow():
             except Exception as err:
                 logging.error("Error while trying to call to the API: %s", err)
 
+    # Generación de la función para acumular los kw por cliente
     class TotalKwByClientFn(beam.CombineFn):
         def create_accumulator(self):
             return {}
@@ -108,11 +110,13 @@ def runDataflow():
         def extract_output(self, accumulator):
             return accumulator
 
+    # Añadimos el timestamp para que sea en streaming
     class AddTimestamp(beam.DoFn):
         def process(self, element, timestamp=beam.DoFn.TimestampParam, window=beam.DoFn.WindowParam, pane_info=beam.DoFn.PaneInfoParam):
             element['timestamp'] = str(datetime.utcnow())
             yield element
 
+    # Agregamos las claves a los valores que hemos agregado previamente
     class OutputFormatDoFn(beam.DoFn):
         def process(self, element):
             yield json.dumps(element).encode('utf-8')
@@ -150,7 +154,6 @@ def runDataflow():
             | "Format aggregation" >> beam.FlatMap(format_aggr)
             | "Add timestamp" >> beam.ParDo(AddTimestamp())
             | "OutputFormat" >> beam.ParDo(OutputFormatDoFn())
-            # | "Print" >> beam.Map(print_data)
             | "WriteToPubSub" >> beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
          )
 
