@@ -88,14 +88,14 @@ def runDataflow(output_table):
     parser.add_argument(
                 '--bigquery_schema_path_consumption',
                 required=False,
-                default='./Schemas/bq_schema_comsupmtion.json',
+                default='./schemas/bq_schema_comsupmtion.json',
                 help='BigQuery Schema Path consumption within the repository.')
 
 
 
     args, opts = parser.parse_known_args()        
 
-    #    """ BigQuery Table Schemas """
+    #    """ BigQuery Table schemas """
 
     #Consumption table
     with open(args.bigquery_schema_path_consumption) as file:
