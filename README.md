@@ -29,47 +29,49 @@ EDEM ha creado el día 18 de Marzo un evento de lanzamiento de empresas con prod
 
 ## Configuración del sistema
 
-**PubSub**
+## **PubSub**
 En primer lugar, creamos dos Topics con sus respectivas suscripciones por defecto. 
 
 -El topic **consumption** que utilizaremos para leer los datos de nuestros generadores que simulan los datos de clientes.
+
 -El topic **alertas** en el que se volcará el output del dataflow que luego utilizaremos para las alertas .
 
-**Cloud Storage**
+ ## **Cloud Storage**
 
 Creamos un **bucket** único que luego utilizaremos para construir el Dataflow Flex Template.
 
-**API**
+ ## **API**
  
  Hacemos el deploy de nuestra api en google cloud run mediante github accions a través de Terraform.
 
-**DataFlow**
+ ## **DataFlow**
 
-Lanzamos nuestro dataflow el cual ejecuta 2 rutas diferentes con nuestros datos:
+Lanzamos nuestro dataflow el cual ejecuta 2 rutas diferentes con nuestros datos mediante el siguiente código:
+
+
 
 1.La primera ruta, se encarga de coger los datos de nuestra cola de mensajes , añadirles la franja horaria y guardar los datos en la tabla de consumption.
 
 2.La segunda ruta,se encarga de coger los datos de nuestra cola de mensajes y realizarles la tranformación pertinente para agregarlos por cliente y dispositivo, por ultimo guarda el mensaje en el topic alerta para posteriormente utilizarlo en la función.
 
 
-
-
-**Cloud Functions**
+ ## **Cloud Functions**
 
 Creamos una funcion llamada alerta que recibe los datos del tópico alerta en el que hemos volcado el output del dataflow, una vez tiene los datos les añade la franja de consumo mediante la api y ejecuta la lógica pertinente para determinar si el consumo es el aporpiado para el periodo.
 
 
-**BigQuery**
+ ## **BigQuery**
 
 En BigQuery se almacenarán los diferentes datos que empleamos en el proyecto, hemos creado un dataset llamado vidamajuna dodne se encuentra la tabla consumption y la tabla alertas.
 
-1.La **Tabla consumption** recoge los datos del consumo de nuestros clientes
-2.La **Tabla alertas**  recoge los datos transformados por nuestro dataflow y nos 
+1.La **Tabla consumption** recoge los datos del consumo de nuestros clientes.
+
+2.La **Tabla alertas**  recoge los datos transformados por nuestra función y nos indica que si el consumo es adecuado para el periodo.
 
 
-**Data Studio**
+ ## **Data Studio**
 
 Finalmente, desde Data Studio se leen directamente los datos de BigQuery y se muestran en un dashboard interactivo.
 
 
-**Video del funcionamiento**
+ ## **Video del funcionamiento**
