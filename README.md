@@ -14,11 +14,11 @@
 
 # Proyecto
 ## Contexto
-EDEM ha creado el día 18 de Marzo un evento de lanzamiento de empresas con productos IoT. Es vuestro momento! En este evento podréis presentar vuestro producto IoT como SaaS. Durante estas tres semanas, debéis pensar un producto IoT, desarrollarlo y simular su uso. Este proyecto debe tener una arquitectura escalable pero no es obligatorio cloud, vosotros decidís. De cara a participar en este evento, vuestra solución debe ser escalable, opensource y cloud.
+EDEM ha creado el día 18 de febrero un evento de lanzamiento de empresas con productos IoT. Es vuestro momento! En este evento podréis presentar vuestro producto IoT como SaaS. Durante estas tres semanas, debéis pensar un producto IoT, desarrollarlo y simular su uso. Este proyecto debe tener una arquitectura escalable pero no es obligatorio cloud, vosotros decidís. De cara a participar en este evento, vuestra solución debe ser escalable, opensource y cloud.
 
 ## ¿Qué es VIDAMAJUNA?
 
-**VIDAMAJUNA** es una startup enfocada al ahorro energético para las oficinas.
+**VIDAMAJUNA** es una startup tecnológica centrada en la reducción de costes en la factura de la luz de pequeñas y medianas empresas.
  
 
 # Tecnología
