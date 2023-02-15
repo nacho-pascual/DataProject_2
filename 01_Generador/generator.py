@@ -1,7 +1,6 @@
 #Import libraries
 import json
 import time
-import uuid
 import random
 import logging
 import argparse
@@ -98,7 +97,7 @@ def run_generator(project_id, topic_name):
                             kw = random.uniform(1.32, 1.98) 
                         elif device[1] == "aire acondicionado" and timestamp.hour in [19]:
                             kw = random.uniform(1.32, 1.98) 
-                        elif device[1] == "microondas" and timestamp.hour in [14]:
+                        elif device[1] == "microondas" and timestamp.hour in [14,15,16,17,18,19,20]:
                             kw = random.uniform(1.00, 1.50) 
                         elif device[1] == "cafetera" and timestamp.hour in [9,11,15]:
                             kw = random.uniform(0.72, 0.90)
@@ -113,9 +112,8 @@ def run_generator(project_id, topic_name):
                         else:
                             kw = random.uniform(0.001,0.005)
                         message = generateMockData(client_id, device[0], device[1], str(round(kw, 3)), str(timestamp))
-                        print(message)
                         pubsub_class.publishMessages(message)
-                        time.sleep(1)
+            time.sleep(1)
 
     except Exception as err:
         logging.error("Error while inserting data into out PubSub Topic: %s", err)
