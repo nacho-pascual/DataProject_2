@@ -54,7 +54,7 @@ Lanzamos nuestro dataflow el cual ejecuta 2 rutas diferentes con nuestros datos 
 
 2.La segunda ruta,se encarga de coger los datos de nuestra cola de mensajes y realizarles la tranformación pertinente para agregarlos por cliente y dispositivo, por ultimo guarda el mensaje en el topic alerta para posteriormente utilizarlo en la función.
 
-![dataflow](./00_tmp/Imagenes/dataflow.png)
+![DATAFLOW](./00_tmp/Imagenes/dataflow.jpeg)
 
  ## **Cloud Functions**
 
