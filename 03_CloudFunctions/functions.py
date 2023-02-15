@@ -46,17 +46,17 @@ def pubsub_to_bigquery(event, context):
 
 
     #Condition if we have the kw and the timestamp to delimite the consume in certain hours
-    message.update({"aggkw":(float(message['aggkw']))})
+    message.update({"kw":(float(message['kw']))})
 
     # Condiciones para estructurar los mensajes recibidos
-    if (message["aggkw"] >= 1.0 and 6 <= datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour <= 20 and message['franja'] == "punta") or (message["aggkw"] >= 0.6 and 6 > datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour > 20):
-        message.update({"aggkw":str(message["aggkw"])})
+    if (message["kw"] >= 0.5 and 6 <= datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour <= 20 and message['franja'] == "punta") or (message["kw"] >= 0.1 and 6 > datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour > 20):
+        message.update({"kw":str(message["kw"])})
         message.update({"state":str(alerta)})
-    elif 0.7 <= message["aggkw"] <= 1.0 and 6 <= datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour <= 20 and message['franja'] == "llano":
-        message.update({"aggkw":str(message["aggkw"])})
+    elif 0.45 <= message["kw"] <= 0.49 and 6 <= datetime.strptime(message["timestamp"], "%Y-%m-%d %H:%M:%S.%f").hour <= 20 and message['franja'] == "llano":
+        message.update({"kw":str(message["kw"])})
         message.update({"state":str(alerta)})
     else:
-        message.update({"aggkw":str(message["aggkw"])})
+        message.update({"kw":str(message["kw"])})
         message.update({"state":str(normal)})
     logging.info(message)
 
