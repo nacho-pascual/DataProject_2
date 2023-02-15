@@ -1,4 +1,0 @@
-apache_beam[gcp]
-google.auth
-Faker
-google.cloud.pubsub
