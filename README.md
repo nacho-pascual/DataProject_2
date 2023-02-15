@@ -1,6 +1,6 @@
 # VIDAMAJUNA
 
-<img src = "C:\Users\Marina\Downloads\logo.png" width="300">
+![LOGO](./Imagenes/logo_vidamajuna.png)
 
 # Data Project 2
 ## Máster en Data Analytics - EDEM
@@ -23,6 +23,8 @@ VIDAMAJUNA es una startup enfocada al ahorro energético para las oficinas.
 
 # Tecnología
 ## Arquitectura
+
+![ARQUITECTURA](./Imagenes/Diagrama de arquitectura.png)
 
 
 ## Configuración del sistema
