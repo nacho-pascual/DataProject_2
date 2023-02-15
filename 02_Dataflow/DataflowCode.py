@@ -150,7 +150,6 @@ def runDataflow():
             | "Format aggregation" >> beam.FlatMap(format_aggr)
             | "Add timestamp" >> beam.ParDo(AddTimestamp())
             | "OutputFormat" >> beam.ParDo(OutputFormatDoFn())
-            # | "Print" >> beam.Map(print_data)
             | "WriteToPubSub" >> beam.io.WriteToPubSub(topic=f"projects/{args.project_id}/topics/{args.output_topic}", with_attributes=False)
          )
 
