@@ -1,6 +1,12 @@
-python edem_dataflow_streaming.py \
-    --project_id psyched-freedom-376515 \
-    --hostname <HOSTNAME> \
-    --input_subscription <INPUT_PUBSUB_SUBSCRIPTION> \
-    --output_topic <OUTPUT_PUBSUB_TOPIC> \
-    --output_bigquery <DATASET>.<TABLE>
+python DataflowCode.py \
+--project_id psyched-freedom-376515 \
+--input_subscription consumption-sub \
+--output_topic alerta \
+--api_url https://vidamajuna-api-ew6hdfei4a-ew.a.run.app/franjas \
+--output_bigquery vidamajuna.consumption \
+--bigquery_schema_path "./Schemas/bq_schema_consumption.json" \
+--runner DataflowRunner \
+--job_name alertasproject \
+--region europe-west1 \
+--temp_location gs://alertas_final/tmp \
+--staging_location gs://alertas_final/stg
